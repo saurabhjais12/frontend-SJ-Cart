@@ -15,6 +15,7 @@ const Header = () => {
   const user = useSelector(state => state?.user?.user)
   const dispatch = useDispatch()
   const [menuDisplay,setMenuDisplay] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const context = useContext(Context)
   const navigate = useNavigate()
   const searchInput = useLocation()
@@ -39,7 +40,6 @@ const Header = () => {
     if(data.error){
       toast.error(data.message)
     }
-
   }
 
   const handleSearch = (e)=>{
@@ -52,85 +52,128 @@ const Header = () => {
       navigate("/search")
     }
   }
+
   return (
-    <header className='h-16 shadow-md bg-white fixed w-full z-40'>
-      <div className=' h-full container mx-auto flex items-center px-4 justify-between'>
-            <div className=''>
-                <Link to={"/"}>
-                    <Logo w={90} h={50}/>
-                </Link>
+    <header className='h-14 sm:h-16 shadow-md bg-white fixed w-full z-40'>
+      <div className='h-full container mx-auto flex items-center px-3 sm:px-4 justify-between'>
+
+        {/* Logo */}
+        <div className='flex items-center'>
+          <Link to={"/"}>
+            <Logo />
+          </Link>
+        </div>
+
+        {/* Search - Desktop */}
+        <div className='hidden lg:flex items-center w-full max-w-sm border rounded-full focus-within:shadow pl-2'>
+          <input
+            type='text'
+            placeholder='Search product here...'
+            className='w-full outline-none py-1 text-sm sm:text-base'
+            onChange={handleSearch}
+            value={search}
+          />
+          <div className='text-lg min-w-[40px] h-8 bg-red-600 flex items-center justify-center rounded-r-full text-white cursor-pointer'>
+            <GrSearch />
+          </div>
+        </div>
+
+        {/* Right side icons */}
+        <div className='flex items-center gap-4 sm:gap-7'>
+
+          {/* Mobile Search Icon */}
+          <div className='lg:hidden text-2xl cursor-pointer text-red-600' onClick={() => setMobileSearchOpen(prev => !prev)}>
+            <GrSearch />
+          </div>
+
+          {/* Mobile Search Input */}
+          {mobileSearchOpen && (
+            <div className='absolute top-14 left-0 right-0 bg-white px-4 py-2 shadow-md z-50'>
+              <input
+                type='text'
+                autoFocus
+                placeholder='Search product here...'
+                className='w-full outline-none border border-gray-300 rounded-full px-3 py-1 text-sm'
+                onChange={handleSearch}
+                value={search}
+                onBlur={() => setMobileSearchOpen(false)}
+              />
             </div>
+          )}
 
-            <div className='hidden lg:flex items-center w-full justify-between max-w-sm border rounded-full focus-within:shadow pl-2'>
-                <input type='text' placeholder='search product here...' className='w-full outline-none' onChange={handleSearch} value={search}/>
-                <div className='text-lg min-w-[50px] h-8 bg-red-600 flex items-center justify-center rounded-r-full text-white'>
-                  <GrSearch />
-                </div>
-            </div>
-
-
-            <div className='flex items-center gap-7'>
-                
-                <div className='relative flex justify-center'>
-
+          {/* User Icon */}
+          <div className='relative flex justify-center'>
+            {
+              user?._id ? (
+                <div
+                  className='text-2xl sm:text-3xl cursor-pointer relative flex justify-center'
+                  onClick={() => setMenuDisplay(preve => !preve)}
+                >
                   {
-                    user?._id && (
-                      <div className='text-3xl cursor-pointer relative flex justify-center' onClick={()=>setMenuDisplay(preve => !preve)}>
-                        {
-                          user?.profilePic ? (
-                            <img src={user?.profilePic} className='w-10 h-10 rounded-full' alt={user?.name} />
-                          ) : (
-                            <FaRegCircleUser/>
-                          )
-                        }
-                      </div>
+                    user?.profilePic ? (
+                      <img src={user?.profilePic} className='w-8 h-8 sm:w-10 sm:h-10 rounded-full' alt={user?.name} />
+                    ) : (
+                      <FaRegCircleUser />
                     )
                   }
-                  
-                  
-                  {
-                    menuDisplay && (
-                      <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded' >
-                        <nav>
-                          {
-                            user?.role === ROLE.ADMIN && (
-                              <Link to={"/admin-panel/all-products"} className='whitespace-nowrap hidden md:block hover:bg-slate-100 p-2' onClick={()=>setMenuDisplay(preve => !preve)}>Admin Panel</Link>
-                            )
-                          }
-                         
-                        </nav>
-                      </div>
-                    )
-                  }
-                 
                 </div>
+              ) : null
+            }
 
-                  {
-                     user?._id && (
-                      <Link to={"/cart"} className='text-2xl relative'>
-                          <span><FaShoppingCart/></span>
-      
-                          <div className='bg-red-600 text-white w-5 h-5 rounded-full p-1 flex items-center justify-center absolute -top-2 -right-3'>
-                              <p className='text-sm'>{context?.cartProductCount}</p>
-                          </div>
-                      </Link>
+            {
+              menuDisplay && (
+                <div className='absolute bg-white top-11 right-0 h-fit p-2 shadow-lg rounded z-50'>
+                  <nav>
+                    {
+                      user?.role === ROLE.ADMIN && (
+                        <Link
+                          to={"/admin-panel/all-products"}
+                          className='whitespace-nowrap hidden md:block hover:bg-slate-100 p-2'
+                          onClick={() => setMenuDisplay(false)}
+                        >
+                          Admin Panel
+                        </Link>
                       )
-                  }
-              
-
-
-                <div>
-                  {
-                    user?._id  ? (
-                      <button onClick={handleLogout} className='px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700'>Logout</button>
-                    )
-                    : (
-                    <Link to={"/login"} className='px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700'>Login</Link>
-                    )
-                  }
-   
+                    }
+                  </nav>
                 </div>
-            </div>
+              )
+            }
+          </div>
+
+          {/* Cart Icon */}
+          {
+            user?._id && (
+              <Link to={"/cart"} className='text-xl sm:text-2xl relative'>
+                <FaShoppingCart />
+                <div className='bg-red-600 text-white w-4 h-4 sm:w-5 sm:h-5 rounded-full p-[2px] flex items-center justify-center absolute -top-1 -right-2 text-xs'>
+                  <p>{context?.cartProductCount}</p>
+                </div>
+              </Link>
+            )
+          }
+
+          {/* Login/Logout Button */}
+          <div>
+            {
+              user?._id ? (
+                <button
+                  onClick={handleLogout}
+                  className='px-3 py-1 text-xs sm:text-sm rounded-full text-white bg-red-600 hover:bg-red-700'
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to={"/login"}
+                  className='px-3 py-1 text-xs sm:text-sm rounded-full text-white bg-red-600 hover:bg-red-700'
+                >
+                  Login
+                </Link>
+              )
+            }
+          </div>
+        </div>
       </div>
     </header>
   )

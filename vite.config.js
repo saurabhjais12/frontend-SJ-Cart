@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',  // allow external connections
     allowedHosts: ['frontend-sj-cart-4.onrender.com'], // add your Render domain here
+    // allowedHosts: ['http://localhost:8080'], // add your Render domain here
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
   },
 })

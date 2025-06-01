@@ -1,4 +1,5 @@
 const backendDomin = "https://backend-sj-cart.onrender.com"
+// const backendDomin = "http://localhost:8080"
 
 const SummaryApi = {
     signUP : {
