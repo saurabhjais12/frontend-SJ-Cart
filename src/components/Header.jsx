@@ -11,7 +11,6 @@ import { setUserDetails } from '../store/userSlice';
 import ROLE from '../common/role';
 import Context from '../context';
 
-
 const Header = () => {
   const user = useSelector(state => state?.user?.user)
   const dispatch = useDispatch()
@@ -61,11 +60,9 @@ const Header = () => {
         {/* Logo */}
         <div className='flex items-center'>
           <Link to={"/"}>
-            {/* Smaller logo on mobile (text-xl + icon h-8), bigger on desktop */}
             <Logo className="flex items-center gap-1 select-none cursor-pointer" />
           </Link>
         </div>
-
 
         {/* Search - Desktop */}
         <div className='hidden lg:flex items-center w-full max-w-sm border rounded-full focus-within:shadow pl-2'>
@@ -110,7 +107,7 @@ const Header = () => {
               user?._id ? (
                 <div
                   className='text-2xl sm:text-3xl cursor-pointer relative flex justify-center'
-                  onClick={() => setMenuDisplay(preve => !preve)}
+                  onClick={() => setMenuDisplay(prev => !prev)}
                 >
                   {
                     user?.profilePic ? (
@@ -131,7 +128,7 @@ const Header = () => {
                       user?.role === ROLE.ADMIN && (
                         <Link
                           to={"/admin-panel/all-products"}
-                          className='whitespace-nowrap hidden md:block hover:bg-slate-100 p-2'
+                          className='whitespace-nowrap hover:bg-slate-100 p-2 block'
                           onClick={() => setMenuDisplay(false)}
                         >
                           Admin Panel
