@@ -9,7 +9,7 @@ import Context from '../context';
 const VerticalCardProduct = ({ category, heading }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const loadingList = new Array(13).fill(null);
+  const loadingList = new Array(10).fill(null);
   const scrollElement = useRef();
 
   const { fetchUserAddToCart } = useContext(Context);
@@ -23,7 +23,6 @@ const VerticalCardProduct = ({ category, heading }) => {
     setLoading(true);
     const categoryProduct = await fetchCategoryWiseProduct(category);
     setLoading(false);
-    console.log("vertical data", categoryProduct.data);
     setData(Array.isArray(categoryProduct?.data) ? categoryProduct.data : []);
   };
 
@@ -40,81 +39,80 @@ const VerticalCardProduct = ({ category, heading }) => {
   };
 
   return (
-    <div className='container mx-auto px-4 my-6 relative'>
-      <h2 className='text-2xl font-semibold py-4'>{heading}</h2>
+    <div className='container mx-auto px-2 sm:px-4 my-6 relative'>
+      <h2 className='text-lg sm:text-2xl font-semibold py-4'>{heading}</h2>
 
       <div
-        className='flex items-center gap-4 md:gap-6 overflow-x-scroll scrollbar-none transition-all'
+        className='flex items-start gap-3 sm:gap-4 overflow-x-scroll scrollbar-none transition-all'
         ref={scrollElement}
       >
+        {/* Scroll Arrows for Desktop */}
         <button
-          className='bg-white shadow-md rounded-full p-1 absolute left-0 text-lg hidden md:block'
+          className='bg-white shadow-md rounded-full p-1 absolute left-0 top-1/2 -translate-y-1/2 text-lg hidden md:block z-10'
           onClick={scrollLeft}
         >
           <FaAngleLeft />
         </button>
         <button
-          className='bg-white shadow-md rounded-full p-1 absolute right-0 text-lg hidden md:block'
+          className='bg-white shadow-md rounded-full p-1 absolute right-0 top-1/2 -translate-y-1/2 text-lg hidden md:block z-10'
           onClick={scrollRight}
         >
           <FaAngleRight />
         </button>
 
-        {loading ? (
-          loadingList.map((_, index) => (
-            <div
-              key={index}
-              className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] bg-white rounded-sm shadow'
-            >
-              <div className='bg-slate-200 h-48 p-4 min-w-[280px] md:min-w-[145px] flex justify-center items-center animate-pulse'></div>
-              <div className='p-4 grid gap-3'>
-                <h2 className='font-medium text-base md:text-lg text-ellipsis line-clamp-1 text-black p-1 py-2 animate-pulse rounded-full bg-slate-200'></h2>
-                <p className='capitalize text-slate-500 p-1 animate-pulse rounded-full bg-slate-200 py-2'></p>
-                <div className='flex gap-3'>
-                  <p className='text-red-600 font-medium p-1 animate-pulse rounded-full bg-slate-200 w-full py-2'></p>
-                  <p className='text-slate-500 line-through p-1 animate-pulse rounded-full bg-slate-200 w-full py-2'></p>
-                </div>
-                <button className='text-sm text-white px-3 rounded-full bg-slate-200 py-2 animate-pulse'></button>
-              </div>
-            </div>
-          ))
-        ) : (
-          data.map((product, index) => (
-            <Link
-              to={`/product/${product?._id}`}
-              key={product?._id || index}
-              className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] bg-white rounded-sm shadow'
-            >
-              <div className='bg-slate-200 h-48 p-4 min-w-[280px] md:min-w-[145px] flex justify-center items-center'>
+        {(loading ? loadingList : data).map((product, index) => (
+          <div
+            key={product?._id || index}
+            className='min-w-[180px] sm:min-w-[220px] max-w-[200px] sm:max-w-[240px] bg-white rounded-md shadow-md flex flex-col'
+          >
+            <div className='bg-slate-100 h-40 sm:h-48 p-2 sm:p-4 flex items-center justify-center'>
+              {loading ? (
+                <div className='w-full h-full bg-slate-300 animate-pulse rounded'></div>
+              ) : (
                 <img
-                  src={product?.productImage?.[0] || ''}
+                  src={product?.productImage?.[0]}
                   alt={product?.productName}
-                  className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply'
+                  className='object-contain h-full transition-transform hover:scale-105 duration-200 mix-blend-multiply'
                 />
-              </div>
-              <div className='p-4 grid gap-3'>
-                <h2 className='font-medium text-base md:text-lg text-ellipsis line-clamp-1 text-black'>
-                  {product?.productName}
-                </h2>
-                <p className='capitalize text-slate-500'>{product?.category}</p>
-                <div className='flex gap-3'>
-                  <p className='text-red-600 font-medium'>
-                    {displayINRCurrency(product?.sellingPrice)}
-                  </p>
-                  <p className='text-slate-500 line-through'>
-                    {displayINRCurrency(product?.price)}
-                  </p>
-                </div>
-                <button
-                  className='text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-0.5 rounded-full'
-                  onClick={(e) => handleAddToCart(e, product?._id)}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </Link>
-          ))
-        )}
+              )}
+            </div>
+
+            <div className='p-2 sm:p-4 grid gap-1 sm:gap-2'>
+              {loading ? (
+                <>
+                  <div className='h-4 rounded-full bg-slate-300 animate-pulse'></div>
+                  <div className='h-3 w-1/2 rounded-full bg-slate-300 animate-pulse'></div>
+                  <div className='flex gap-2'>
+                    <div className='h-4 w-1/2 rounded-full bg-slate-300 animate-pulse'></div>
+                    <div className='h-4 w-1/2 rounded-full bg-slate-300 animate-pulse'></div>
+                  </div>
+                  <div className='h-6 w-full rounded-full bg-slate-300 animate-pulse'></div>
+                </>
+              ) : (
+                <>
+                  <h2 className='text-sm sm:text-base font-medium line-clamp-1'>
+                    {product?.productName}
+                  </h2>
+                  <p className='text-xs capitalize text-slate-500'>{product?.category}</p>
+                  <div className='flex gap-2 items-center'>
+                    <p className='text-red-600 text-sm font-semibold'>
+                      {displayINRCurrency(product?.sellingPrice)}
+                    </p>
+                    <p className='text-slate-500 text-xs line-through'>
+                      {displayINRCurrency(product?.price)}
+                    </p>
+                  </div>
+                  <button
+                    className='text-xs sm:text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-0.5 rounded-full'
+                    onClick={(e) => handleAddToCart(e, product?._id)}
+                  >
+                    Add to Cart
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
