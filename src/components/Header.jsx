@@ -15,41 +15,41 @@ import Context from '../context';
 const Header = () => {
   const user = useSelector(state => state?.user?.user)
   const dispatch = useDispatch()
-  const [menuDisplay,setMenuDisplay] = useState(false)
+  const [menuDisplay, setMenuDisplay] = useState(false)
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const context = useContext(Context)
   const navigate = useNavigate()
   const searchInput = useLocation()
   const URLSearch = new URLSearchParams(searchInput?.search)
   const searchQuery = URLSearch.getAll("q")
-  const [search,setSearch] = useState(searchQuery)
+  const [search, setSearch] = useState(searchQuery)
 
-  const handleLogout = async() => {
-    const fetchData = await fetch(SummaryApi.logout_user.url,{
-      method : SummaryApi.logout_user.method,
-      credentials : 'include'
+  const handleLogout = async () => {
+    const fetchData = await fetch(SummaryApi.logout_user.url, {
+      method: SummaryApi.logout_user.method,
+      credentials: 'include'
     })
 
     const data = await fetchData.json()
 
-    if(data.success){
+    if (data.success) {
       toast.success(data.message)
       dispatch(setUserDetails(null))
       navigate("/")
     }
 
-    if(data.error){
+    if (data.error) {
       toast.error(data.message)
     }
   }
 
-  const handleSearch = (e)=>{
+  const handleSearch = (e) => {
     const { value } = e.target
     setSearch(value)
 
-    if(value){
+    if (value) {
       navigate(`/search?q=${value}`)
-    }else{
+    } else {
       navigate("/search")
     }
   }
@@ -61,9 +61,11 @@ const Header = () => {
         {/* Logo */}
         <div className='flex items-center'>
           <Link to={"/"}>
-            <Logo />
+            {/* Smaller logo on mobile (text-xl + icon h-8), bigger on desktop */}
+            <Logo className="flex items-center gap-1 select-none cursor-pointer" />
           </Link>
         </div>
+
 
         {/* Search - Desktop */}
         <div className='hidden lg:flex items-center w-full max-w-sm border rounded-full focus-within:shadow pl-2'>

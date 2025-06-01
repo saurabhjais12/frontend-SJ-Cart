@@ -1,12 +1,12 @@
 import React from 'react'
 
-const Logo = () => {
+const Logo = ({ className = '' }) => {
   return (
-    <div className="flex items-center gap-2 select-none cursor-pointer">
+    <div className={`flex items-center gap-2 select-none cursor-pointer ${className}`}>
       {/* Logo Icon */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-10 w-10 text-red-600 animate-bounce"
+        className="h-8 w-8 sm:h-10 sm:w-10 text-red-600 animate-bounce"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -16,7 +16,7 @@ const Logo = () => {
       </svg>
 
       {/* Logo Text */}
-      <h1 className="text-4xl font-extrabold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-purple-600 drop-shadow-lg">
+      <h1 className="text-xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-pink-500 to-purple-600 drop-shadow-lg">
         SJ-Cart
       </h1>
     </div>
